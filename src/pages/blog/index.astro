@@ -1,0 +1,29 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+let posts = [];
+
+try {
+  posts = await getCollection('blog');
+} catch (e) {
+  console.error('Error loading blog collection:', e);
+}
+---
+
+
+<Layout>
+  <section>
+    <h1>Latest Posts</h1>
+    <ul style="list-style: none; padding: 0;">
+      {posts.map((post) => (
+        <li style="margin-bottom: 2rem;">
+          <a href={`/blog/${post.slug}`} style="font-size: 1.5rem; font-weight: bold; color: #1e40af; text-decoration: none;">
+            {post.data.title}
+          </a>
+          <p style="margin-top: 0.5rem; color: #4B5563;">{post.data.description}</p>
+        </li>
+      ))}
+    </ul>
+  </section>
+</Layout>

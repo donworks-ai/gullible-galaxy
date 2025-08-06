@@ -1,33 +1,23 @@
 ---
+import Layout from '../../layouts/Layout.astro';
 import { getCollection, getEntryBySlug } from 'astro:content';
+import { Astro } from 'astro';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
   return posts.map((post) => ({
     params: { slug: post.slug },
+    props: { post }
   }));
 }
 
-const { slug } = Astro.params;
-const post = await getEntryBySlug('blog', slug);
-
-if (!post) {
-  throw new Error(`Post not found: ${slug}`);
-}
-
-// ✅ FIX: get Content from render(), and metadata from post.data
-const { Content } = await post.render();
-const { title, description } = post.data;
+const { post } = Astro.props;
 ---
-<html>
-  <head>
-    <title>{title}</title>
-  </head>
-  <body>
-    <h1>{title}</h1>
-    <p><i>{description}</i></p>
-    <article>
-      <Content />
-    </article>
-  </body>
-</html>
+
+<Layout>
+  <article>
+    <h1>{post.data.title}</h1>
+    <p><em>{post.data.description}</em></p>
+    <div innerHTML={post.body} />
+  </article>
+</Layout>
